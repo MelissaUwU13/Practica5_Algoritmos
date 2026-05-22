@@ -8,13 +8,8 @@ import javafx.scene.layout.VBox;
 public class TablaGUI extends TableView<VideoGame> {
 
     public TablaGUI(ObservableList<VideoGame> datos) {
-        // Asignamos los datos a la tabla
         this.setItems(datos);
-
-        // Hacemos que use todo el espacio vertical disponible en layouts contenedores
         VBox.setVgrow(this, javafx.scene.layout.Priority.ALWAYS);
-
-        // Construimos las columnas asociadas internamente
         crearColumnas();
     }
 

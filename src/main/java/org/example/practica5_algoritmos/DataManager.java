@@ -16,7 +16,7 @@ public class DataManager {
 
     private void loadData() {
         // Ruta del CSV dentro de resources (ajústala si es necesario)
-        String csvFile = "/resources/video_games.csv";
+        String csvFile = "/video_games.csv";
         try (InputStream is = getClass().getResourceAsStream(csvFile);
              BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
             String line;

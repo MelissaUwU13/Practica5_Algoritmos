@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class DataManager {
     private List<VideoGame> originalList;
@@ -16,33 +15,38 @@ public class DataManager {
     }
 
     private void loadData() {
-        // Asegúrate de que el archivo video_games.csv esté en src/app/resources/
-        try (InputStream is = getClass().getResourceAsStream("/app/resources/video_games.csv");
+        // Ruta del CSV dentro de resources (ajústala si es necesario)
+        String csvFile = "/resources/video_games.csv";
+        try (InputStream is = getClass().getResourceAsStream(csvFile);
              BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
-
             String line;
             boolean firstLine = true;
             while ((line = br.readLine()) != null) {
                 if (firstLine) { firstLine = false; continue; } // saltar cabecera
-                String[] fields = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)"); // maneja comillas
-                if (fields.length < 10) continue;
-
+                // El CSV tiene comillas alrededor de algunos campos, usamos un split simple
+                // pero como hay comillas internas, hacemos una limpieza posterior
+                String[] fields = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+                if (fields.length < 13) continue;
                 try {
-                    String name = clean(fields[0]);
-                    String platform = clean(fields[1]);
-                    int year = fields[2].isEmpty() ? 0 : Integer.parseInt(fields[2]);
-                    String genre = clean(fields[3]);
-                    String publisher = clean(fields[4]);
-                    double na = fields[5].isEmpty() ? 0 : Double.parseDouble(fields[5]);
-                    double eu = fields[6].isEmpty() ? 0 : Double.parseDouble(fields[6]);
-                    double jp = fields[7].isEmpty() ? 0 : Double.parseDouble(fields[7]);
-                    double other = fields[8].isEmpty() ? 0 : Double.parseDouble(fields[8]);
-                    double global = fields[9].isEmpty() ? 0 : Double.parseDouble(fields[9]);
+                    String title = clean(fields[0]);
+                    String releaseDate = clean(fields[1]);
+                    String team = clean(fields[2]);
+                    double rating = fields[3].isEmpty() ? 0.0 : Double.parseDouble(fields[3]);
+                    int timesListed = parseKNumber(clean(fields[4]));
+                    int numberOfReviews = parseKNumber(clean(fields[5]));
+                    String genres = clean(fields[6]);
+                    String summary = clean(fields[7]);
+                    String reviews = clean(fields[8]);
+                    int plays = parseKNumber(clean(fields[9]));
+                    int playing = parseKNumber(clean(fields[10]));
+                    int backlogs = parseKNumber(clean(fields[11]));
+                    int wishlist = parseKNumber(clean(fields[12]));
 
-                    originalList.add(new VideoGame(name, platform, year, genre, publisher,
-                            na, eu, jp, other, global));
-                } catch (NumberFormatException e) {
-                    // ignorar filas con formato incorrecto
+                    originalList.add(new VideoGame(title, releaseDate, team, rating,
+                            timesListed, numberOfReviews, genres, summary, reviews,
+                            plays, playing, backlogs, wishlist));
+                } catch (Exception e) {
+                    // ignorar líneas con formato incorrecto
                 }
             }
         } catch (Exception e) {
@@ -59,7 +63,18 @@ public class DataManager {
         return s;
     }
 
+    // Convierte cadenas como "3.9K" a 3900
+    private int parseKNumber(String s) {
+        if (s == null || s.isEmpty()) return 0;
+        s = s.trim().toUpperCase();
+        if (s.endsWith("K")) {
+            double val = Double.parseDouble(s.substring(0, s.length()-1));
+            return (int)(val * 1000);
+        }
+        return (int)Double.parseDouble(s);
+    }
+
     public List<VideoGame> getOriginalList() {
-        return new ArrayList<>(originalList);  // copia defensiva
+        return new ArrayList<>(originalList);
     }
 }

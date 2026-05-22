@@ -52,7 +52,7 @@ public class Ordenamientos {
         while (i <= mid) arr[k++] = aux[i++];
     }
 
-    // ---------- SHELL SORT (secuencia de Knuth) ----------
+    // ---------- SHELL SORT (Knuth) ----------
     public static <T> void shellSort(T[] arr, Comparator<? super T> comp) {
         int n = arr.length;
         int h = 1;
@@ -67,7 +67,7 @@ public class Ordenamientos {
         }
     }
 
-    // ---------- SELECCIÓN DIRECTA (Selection sort) ----------
+    // ---------- SELECCIÓN DIRECTA ----------
     public static <T> void selectionSort(T[] arr, Comparator<? super T> comp) {
         int n = arr.length;
         for (int i = 0; i < n - 1; i++) {
@@ -79,8 +79,12 @@ public class Ordenamientos {
         }
     }
 
-    // ---------- RADIX SORT (sólo para enteros) ----------
-    // Necesitamos una función que extraiga un int de cada elemento
+    // ---------- RADIX SORT (para enteros) ----------
+    @FunctionalInterface
+    public interface ToIntFunction<T> {
+        int applyAsInt(T value);
+    }
+
     public static <T> void radixSort(T[] arr, ToIntFunction<? super T> keyExtractor) {
         if (arr.length == 0) return;
         int maxVal = Integer.MIN_VALUE;
@@ -111,12 +115,6 @@ public class Ordenamientos {
         System.arraycopy(output, 0, arr, 0, n);
     }
 
-    @FunctionalInterface
-    public interface ToIntFunction<T> {
-        int applyAsInt(T value);
-    }
-
-    // Utilidad
     private static <T> void swap(T[] arr, int i, int j) {
         T temp = arr[i];
         arr[i] = arr[j];

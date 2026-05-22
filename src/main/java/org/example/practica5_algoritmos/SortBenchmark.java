@@ -6,15 +6,14 @@ import java.util.Comparator;
 public class SortBenchmark {
 
     public static <T> long measureTime(T[] arr, Comparator<? super T> comp, String algorithm) {
-        T[] copy = arr.clone();
         long start = System.nanoTime();
         switch (algorithm) {
-            case "Quicksort": Ordenamientos.quickSort(copy, comp); break;
-            case "Mergesort": Ordenamientos.mergeSort(copy, comp); break;
-            case "Shell sort": Ordenamientos.shellSort(copy, comp); break;
-            case "Selection sort": Ordenamientos.selectionSort(copy, comp); break;
-            case "Arrays.sort()": Arrays.sort(copy, comp); break;
-            case "Arrays.parallelSort()": Arrays.parallelSort(copy, comp); break;
+            case "Quicksort": Ordenamientos.quickSort(arr, comp); break;
+            case "Mergesort": Ordenamientos.mergeSort(arr, comp); break;
+            case "Shell sort": Ordenamientos.shellSort(arr, comp); break;
+            case "Selection sort": Ordenamientos.selectionSort(arr, comp); break;
+            case "Arrays.sort()": Arrays.sort(arr, comp); break;
+            case "Arrays.parallelSort()": Arrays.parallelSort(arr, comp); break;
             default: throw new IllegalArgumentException("Algoritmo desconocido: " + algorithm);
         }
         long end = System.nanoTime();
@@ -22,9 +21,8 @@ public class SortBenchmark {
     }
 
     public static <T> long measureRadixTime(T[] arr, Ordenamientos.ToIntFunction<? super T> keyExtractor) {
-        T[] copy = arr.clone();
         long start = System.nanoTime();
-        Ordenamientos.radixSort(copy, keyExtractor);
+        Ordenamientos.radixSort(arr, keyExtractor);
         long end = System.nanoTime();
         return end - start;
     }

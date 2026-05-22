@@ -27,11 +27,12 @@ public class Controlador {
     private Label timeLabel;
     private BarChart<String, Number> chart;
     private List<VideoGame> originalListCache;
+    private final SortService sortService = new SortService();
 
     // Columnas permitidas para ordenar (excluyendo Summary, Reviews, etc.)
     private final List<String> allowedColumns = Arrays.asList(
-            "Title", "Release Date", "Rating", "Number of Reviews",
-            "Times Listed", "Plays", "Playing", "Backlogs", "Wishlist"
+            "Title", "Release Date", "Team", "Rating", "Genres",
+            "Number of Reviews", "Times Listed", "Plays", "Playing", "Backlogs", "Wishlist"
     );
 
     public Controlador() {
@@ -87,15 +88,6 @@ public class Controlador {
                 new Label("Algoritmo:"), algorithmCombo,
                 sortBtn, resetBtn, benchmarkAllBtn, timeLabel);
 
-        // --- Gráfica ---
-        //CategoryAxis xAxis = new CategoryAxis();
-        //NumberAxis yAxis = new NumberAxis();
-        //yAxis.setLabel("Nanosegundos");
-        //chart = new BarChart<>(xAxis, yAxis);
-        //chart.setTitle("Comparación de tiempos de ordenamiento");
-        //chart.setPrefHeight(400);
-        //chart.setStyle("-fx-background-color: white;");
-
         VBox centerBox = new VBox(10, tableView);
         root.setTop(controls);
         root.setCenter(centerBox);
@@ -146,18 +138,75 @@ public class Controlador {
         releaseCol.setPrefWidth(150);
         tableView.getColumns().add(releaseCol);
 
+        // Columna Team (String)
+        TableColumn<VideoGame, String> teamCol = new TableColumn<>("Team");
+        teamCol.setCellValueFactory(c -> c.getValue().teamProperty());
+        teamCol.setPrefWidth(200);
+        tableView.getColumns().add(teamCol);
+
         // Columna Rating (Double)
         TableColumn<VideoGame, Double> ratingCol = new TableColumn<>("Rating");
         ratingCol.setCellValueFactory(c -> c.getValue().ratingProperty().asObject());
-        ratingCol.setPrefWidth(100);
+        ratingCol.setPrefWidth(80);
         tableView.getColumns().add(ratingCol);
+
+        // Columna Times Listed (Integer)
+        TableColumn<VideoGame, Integer> timesListedCol = new TableColumn<>("Times Listed");
+        timesListedCol.setCellValueFactory(c -> c.getValue().timesListedProperty().asObject());
+        timesListedCol.setPrefWidth(100);
+        tableView.getColumns().add(timesListedCol);
 
         // Columna Number of Reviews (Integer)
         TableColumn<VideoGame, Integer> reviewsCol = new TableColumn<>("Number of Reviews");
         reviewsCol.setCellValueFactory(c -> c.getValue().numberOfReviewsProperty().asObject());
-        reviewsCol.setPrefWidth(150);
+        reviewsCol.setPrefWidth(130);
         tableView.getColumns().add(reviewsCol);
+
+        // Columna Genres (String)
+        TableColumn<VideoGame, String> genresCol = new TableColumn<>("Genres");
+        genresCol.setCellValueFactory(c -> c.getValue().genresProperty());
+        genresCol.setPrefWidth(180);
+        tableView.getColumns().add(genresCol);
+
+        // Columna Summary (String, texto largo)
+        TableColumn<VideoGame, String> summaryCol = new TableColumn<>("Summary");
+        summaryCol.setCellValueFactory(c -> c.getValue().summaryProperty());
+        summaryCol.setPrefWidth(350);
+        tableView.getColumns().add(summaryCol);
+
+        // Columna Reviews (String, texto muy largo)
+        TableColumn<VideoGame, String> reviewsTextCol = new TableColumn<>("Reviews");
+        reviewsTextCol.setCellValueFactory(c -> c.getValue().reviewsProperty());
+        reviewsTextCol.setPrefWidth(450);
+        tableView.getColumns().add(reviewsTextCol);
+
+        // Columna Plays (Integer)
+        TableColumn<VideoGame, Integer> playsCol = new TableColumn<>("Plays");
+        playsCol.setCellValueFactory(c -> c.getValue().playsProperty().asObject());
+        playsCol.setPrefWidth(80);
+        tableView.getColumns().add(playsCol);
+
+        // Columna Playing (Integer)
+        TableColumn<VideoGame, Integer> playingCol = new TableColumn<>("Playing");
+        playingCol.setCellValueFactory(c -> c.getValue().playingProperty().asObject());
+        playingCol.setPrefWidth(80);
+        tableView.getColumns().add(playingCol);
+
+        // Columna Backlogs (Integer)
+        TableColumn<VideoGame, Integer> backlogsCol = new TableColumn<>("Backlogs");
+        backlogsCol.setCellValueFactory(c -> c.getValue().backlogsProperty().asObject());
+        backlogsCol.setPrefWidth(80);
+        tableView.getColumns().add(backlogsCol);
+
+        // Columna Wishlist (Integer)
+        TableColumn<VideoGame, Integer> wishlistCol = new TableColumn<>("Wishlist");
+        wishlistCol.setCellValueFactory(c -> c.getValue().wishlistProperty().asObject());
+        wishlistCol.setPrefWidth(80);
+        tableView.getColumns().add(wishlistCol);
     }
+
+
+
 
     private void performSort() {
         String column = columnCombo.getValue();
@@ -166,42 +215,14 @@ public class Controlador {
         List<VideoGame> currentList = new ArrayList<>(tableView.getItems());
         VideoGame[] array = currentList.toArray(new VideoGame[0]);
 
-        Comparator<VideoGame> comparator = getComparatorForColumn(column);
-        if (comparator == null) {
-            timeLabel.setText("Error: columna no soportada.");
-            return;
-        }
-
-        long time;
         try {
-            if (algorithm.equals("Radix sort")) {
-                if (!isIntegerColumn(column)) {
-                    timeLabel.setText("Radix sort solo funciona con columnas numéricas enteras (ej: Number of Reviews)");
-                    return;
-                }
-                // Obtenemos la función extractora de entero
-                Ordenamientos.ToIntFunction<VideoGame> extractor = getIntExtractor(column);
-                if (extractor == null) {
-                    timeLabel.setText("No se puede aplicar Radix sort a esta columna.");
-                    return;
-                }
-                time = SortBenchmark.measureRadixTime(array, extractor);
-            } else {
-                time = SortBenchmark.measureTime(array, comparator, algorithm);
-            }
+            long time = sortService.sortAndMeasure(array, column, algorithm);
+            observableData.setAll(array);
+            timeLabel.setText(String.format("Tiempo: %,d ns", time));
         } catch (Exception e) {
             timeLabel.setText("Error: " + e.getMessage());
-            return;
         }
-
-        System.out.println("Primer elemento antes: " + array[0].getTitle() + " - " + array[0].getNumberOfReviews());
-// después de ordenar
-        System.out.println("Primer elemento después: " + array[0].getTitle() + " - " + array[0].getNumberOfReviews());
-
-        observableData.setAll(array);
-        timeLabel.setText(String.format("Tiempo: %,d ns", time));
     }
-
     private void resetTable() {
         observableData.setAll(originalListCache);
         timeLabel.setText("Tabla restablecida.");
@@ -218,6 +239,8 @@ public class Controlador {
             case "Playing": return Comparator.comparingInt(VideoGame::getPlaying);
             case "Backlogs": return Comparator.comparingInt(VideoGame::getBacklogs);
             case "Wishlist": return Comparator.comparingInt(VideoGame::getWishlist);
+            case "Team": return Comparator.comparing(VideoGame::getTeam, String.CASE_INSENSITIVE_ORDER);
+            case "Genres": return Comparator.comparing(VideoGame::getGenres, String.CASE_INSENSITIVE_ORDER);
             default: return null;
         }
     }

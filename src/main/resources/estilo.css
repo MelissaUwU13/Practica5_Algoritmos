@@ -1,0 +1,122 @@
+.root {
+    -fx-font-size: 13px;
+}
+
+.panel-controles {
+    -fx-background-color: white;
+}
+
+.label-encabezado {
+    -fx-text-fill: #1a365d;
+}
+
+.label-tiempo {
+    -fx-text-fill: #2563eb;
+    -fx-font-size: 14px;
+    -fx-padding: 0 0 0 10;
+}
+
+.combo-box-estilo {
+    -fx-background-color: #f0f4ff;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-color: #cbd5e1;
+    -fx-border-width: 1;
+    -fx-padding: 4 8;
+    -fx-cursor: hand;
+}
+
+.combo-box-estilo:hover {
+    -fx-border-color: #3b82f6;
+    -fx-background-color: #e0ebff;
+}
+
+.boton-estilo {
+    -fx-font-size: 12px;
+    -fx-background-color: linear-gradient(#213fd5, #4c64e4);
+    -fx-text-fill: white;
+    -fx-padding: 15 30;
+    -fx-cursor: hand;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+.boton-estilo:hover {
+    -fx-background-color: linear-gradient(#0d1b6e, #0d1b6e);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0, 0, 2);
+}
+
+
+.table-view {
+    -fx-background-color: white;
+    -fx-border-color: #cbd5e1;
+    -fx-border-width: 1;
+    -fx-padding: 5;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.02), 10, 0, 0, 5);
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #1e3a8a;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-size: 40;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+/* Filas alternas (una blanca, una azul rey super clarito) */
+.table-row-cell {
+    -fx-background-color: white;
+    -fx-border-color: transparent transparent #f1f5f9 transparent;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #f8fafc;
+}
+
+/* Fila seleccionada */
+.table-row-cell:filled:selected {
+    -fx-background-color: #dbeafe;
+    -fx-text-fill: #1e40af;
+}
+
+.table-row-cell:filled:selected .text {
+    -fx-fill: #1e40af;
+}
+
+
+
+
+.bar-chart {
+    -fx-padding: 15;
+    -fx-background-color: white;
+}
+
+/* Color del título principal del gráfico */
+.chart-title {
+    -fx-text-fill: #1e3a8a;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+/* Color de las etiquetas de los ejes (X e Y) */
+.axis-label {
+    -fx-text-fill: #1e40af;
+    -fx-font-weight: bold;
+}
+
+/* Color de los numeritos y nombres en los ejes */
+.axis {
+    -fx-tick-label-fill: #475569;
+}
+
+/* El degradado azul estético para las barras */
+.chart-bar {
+    -fx-bar-fill: #1d4ed8;
+    -fx-background-radius: 4 4 0 0; /* Bordes ligeramente redondeados arriba */
+}

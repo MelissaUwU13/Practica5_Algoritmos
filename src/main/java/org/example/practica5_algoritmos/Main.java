@@ -6,7 +6,7 @@ import javafx.stage.Stage;
 public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
-        new Controlador(); // El controlador crea su propia ventana
+        new AnalisisGUI();
     }
 
     public static void main(String[] args) {

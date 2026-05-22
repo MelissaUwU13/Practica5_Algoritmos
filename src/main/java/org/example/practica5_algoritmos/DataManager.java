@@ -52,9 +52,7 @@ public class DataManager {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            System.err.println("Error cargando datos: " + e.getMessage());
         }
-        System.out.println("Cargados " + originalList.size() + " registros.");
     }
 
     private String clean(String s) {

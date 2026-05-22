@@ -90,32 +90,24 @@
 }
 
 
-
-
 .bar-chart {
     -fx-padding: 15;
     -fx-background-color: white;
 }
 
-/* Color del título principal del gráfico */
 .chart-title {
     -fx-text-fill: #1e3a8a;
     -fx-font-size: 16px;
-    -fx-font-weight: bold;
 }
 
-/* Color de las etiquetas de los ejes (X e Y) */
 .axis-label {
     -fx-text-fill: #1e40af;
-    -fx-font-weight: bold;
 }
 
-/* Color de los numeritos y nombres en los ejes */
 .axis {
     -fx-tick-label-fill: #475569;
 }
 
-/* El degradado azul estético para las barras */
 .chart-bar {
     -fx-bar-fill: #1d4ed8;
     -fx-background-radius: 4 4 0 0; /* Bordes ligeramente redondeados arriba */

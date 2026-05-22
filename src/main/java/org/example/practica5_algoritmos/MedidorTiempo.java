@@ -3,10 +3,10 @@ package org.example.practica5_algoritmos;
 import java.util.Arrays;
 import java.util.Comparator;
 
-public class SortBenchmark {
+public class MedidorTiempo {
 
-    public static <T> long measureTime(T[] arr, Comparator<? super T> comp, String algorithm) {
-        long start = System.nanoTime();
+    public static <T> long medirTiempo(T[] arr, Comparator<? super T> comp, String algorithm) {
+        long TiempoInicio = System.nanoTime();
         switch (algorithm) {
             case "Quicksort": Ordenamientos.quickSort(arr, comp); break;
             case "Mergesort": Ordenamientos.mergeSort(arr, comp); break;
@@ -16,14 +16,14 @@ public class SortBenchmark {
             case "Arrays.parallelSort()": Arrays.parallelSort(arr, comp); break;
             default: throw new IllegalArgumentException("Algoritmo desconocido: " + algorithm);
         }
-        long end = System.nanoTime();
-        return end - start;
+        long TiempoFinal = System.nanoTime();
+        return TiempoFinal - TiempoInicio;
     }
 
-    public static <T> long measureRadixTime(T[] arr, Ordenamientos.ToIntFunction<? super T> keyExtractor) {
-        long start = System.nanoTime();
+    public static <T> long medirTiempoRadix(T[] arr, Ordenamientos.ToIntFunction<? super T> keyExtractor) {
+        long TiempoInicio = System.nanoTime();
         Ordenamientos.radixSort(arr, keyExtractor);
-        long end = System.nanoTime();
-        return end - start;
+        long TiempoFinal = System.nanoTime();
+        return TiempoFinal - TiempoInicio;
     }
 }

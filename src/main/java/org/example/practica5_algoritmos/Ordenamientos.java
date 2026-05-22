@@ -4,7 +4,6 @@ import java.util.Comparator;
 
 public class Ordenamientos {
 
-    // ---------- QUICKSORT ----------
     public static <T> void quickSort(T[] arr, Comparator<? super T> comp) {
         quickSort(arr, 0, arr.length - 1, comp);
     }

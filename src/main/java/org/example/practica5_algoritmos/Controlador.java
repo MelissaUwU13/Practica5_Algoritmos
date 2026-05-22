@@ -5,13 +5,15 @@ import java.util.Comparator;
 public class Controlador {
     public long sortAndMeasure(VideoGame[] array, String column, String algorithm) {
         Comparator<VideoGame> comparator = getComparator(column);
+
         if (comparator == null) throw new IllegalArgumentException("Columna no soportada");
         if (algorithm.equals("Radix sort")) {
             if (!isIntegerColumn(column)) throw new IllegalArgumentException("Radix solo para enteros");
             Ordenamientos.ToIntFunction<VideoGame> extractor = getIntExtractor(column);
-            return SortBenchmark.measureRadixTime(array, extractor);
-        } else {
-            return SortBenchmark.measureTime(array, comparator, algorithm);
+            return MedidorTiempo.medirTiempoRadix(array, extractor);
+        }
+        else {
+            return MedidorTiempo.medirTiempo(array, comparator, algorithm);
         }
     }
 

@@ -194,6 +194,10 @@ public class Controlador {
             return;
         }
 
+        System.out.println("Primer elemento antes: " + array[0].getTitle() + " - " + array[0].getNumberOfReviews());
+// después de ordenar
+        System.out.println("Primer elemento después: " + array[0].getTitle() + " - " + array[0].getNumberOfReviews());
+
         observableData.setAll(array);
         timeLabel.setText(String.format("Tiempo: %,d ns", time));
     }
@@ -201,16 +205,6 @@ public class Controlador {
     private void resetTable() {
         observableData.setAll(originalListCache);
         timeLabel.setText("Tabla restablecida.");
-    }
-
-    private void updateChart(Map<String, Long> times) {
-        chart.getData().clear();
-        XYChart.Series<String, Number> series = new XYChart.Series<>();
-        series.setName("Tiempo (ns) para " + columnCombo.getValue());
-        for (Map.Entry<String, Long> e : times.entrySet()) {
-            series.getData().add(new XYChart.Data<>(e.getKey(), e.getValue()));
-        }
-        chart.getData().add(series);
     }
 
     private Comparator<VideoGame> getComparatorForColumn(String column) {

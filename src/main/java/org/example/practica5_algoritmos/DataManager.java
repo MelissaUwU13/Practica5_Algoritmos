@@ -26,21 +26,22 @@ public class DataManager {
                 // El CSV tiene comillas alrededor de algunos campos, usamos un split simple
                 // pero como hay comillas internas, hacemos una limpieza posterior
                 String[] fields = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
-                if (fields.length < 13) continue;
+                if (fields.length < 14) continue;
                 try {
-                    String title = clean(fields[0]);
-                    String releaseDate = clean(fields[1]);
-                    String team = clean(fields[2]);
-                    double rating = fields[3].isEmpty() ? 0.0 : Double.parseDouble(fields[3]);
-                    int timesListed = parseKNumber(clean(fields[4]));
-                    int numberOfReviews = parseKNumber(clean(fields[5]));
-                    String genres = clean(fields[6]);
-                    String summary = clean(fields[7]);
-                    String reviews = clean(fields[8]);
-                    int plays = parseKNumber(clean(fields[9]));
-                    int playing = parseKNumber(clean(fields[10]));
-                    int backlogs = parseKNumber(clean(fields[11]));
-                    int wishlist = parseKNumber(clean(fields[12]));
+                    // Saltamos el primer campo (índice 0) que está vacío
+                    String title = clean(fields[1]);
+                    String releaseDate = clean(fields[2]);
+                    String team = clean(fields[3]);
+                    double rating = fields[4].isEmpty() ? 0.0 : Double.parseDouble(fields[4]);
+                    int timesListed = parseKNumber(clean(fields[5]));
+                    int numberOfReviews = parseKNumber(clean(fields[6]));
+                    String genres = clean(fields[7]);
+                    String summary = clean(fields[8]);
+                    String reviews = clean(fields[9]);
+                    int plays = parseKNumber(clean(fields[10]));
+                    int playing = parseKNumber(clean(fields[11]));
+                    int backlogs = parseKNumber(clean(fields[12]));
+                    int wishlist = parseKNumber(clean(fields[13]));
 
                     originalList.add(new VideoGame(title, releaseDate, team, rating,
                             timesListed, numberOfReviews, genres, summary, reviews,

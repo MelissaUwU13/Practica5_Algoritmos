@@ -2,6 +2,7 @@ package org.example.practica5_algoritmos;
 
 import javafx.beans.property.*;
 
+//En esta clase obtenemos los datos de nuestro archivo
 public class VideoGame {
     private final StringProperty title;
     private final StringProperty releaseDate;
@@ -17,6 +18,7 @@ public class VideoGame {
     private final IntegerProperty backlogs;
     private final IntegerProperty wishlist;
 
+    //Constructor - modelado de los datos de video games
     public VideoGame(String title, String releaseDate, String team, double rating,
                      int timesListed, int numberOfReviews, String genres, String summary,
                      String reviews, int plays, int playing, int backlogs, int wishlist) {

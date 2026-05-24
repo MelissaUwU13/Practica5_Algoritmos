@@ -18,15 +18,16 @@ public class AnalisisGUI {
     private TablaGUI tablaView;
     private ComboBox<String> columnaCombo;
     private ComboBox<String> algoritmoCombo;
-    private Label timeLabel;
+    private Label label;
     private List<VideoGame> ListaOriginal;
     private final Controlador controlador = new Controlador();
 
-    private final List<String> allowedColumns = Arrays.asList(
+    private final List<String> Columnas = Arrays.asList(
             "Title", "Release Date", "Team", "Rating", "Genres",
             "Number of Reviews", "Times Listed", "Plays", "Playing", "Backlogs", "Wishlist"
     );
 
+    //Constructor
     public AnalisisGUI() {
         dataManager = new DataManager();
         ListaOriginal = dataManager.getListaOriginal();
@@ -48,9 +49,10 @@ public class AnalisisGUI {
         controls.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
         controls.getStyleClass().add("panel-controles");
 
+        //Combos de columnas y de algoritmos
         columnaCombo = new ComboBox<>();
         columnaCombo.getStyleClass().add("combo-box-estilo");
-        columnaCombo.getItems().addAll(allowedColumns);
+        columnaCombo.getItems().addAll(Columnas);
         columnaCombo.setValue("Rating");
 
         algoritmoCombo = new ComboBox<>();
@@ -59,7 +61,6 @@ public class AnalisisGUI {
                 "Radix sort", "Arrays.sort()", "Arrays.parallelSort()");
         algoritmoCombo.setValue("Quicksort");
 
-        //accion del boton
         columnaCombo.setOnAction(
                 e -> actualizarAlgoritmoCombo()
         );
@@ -67,28 +68,32 @@ public class AnalisisGUI {
         //Botones
         Button sortBtn = new Button("Ordenar");
         sortBtn.getStyleClass().add("boton-estilo");
-        sortBtn.setOnAction(e -> performSort());
+        sortBtn.setOnAction(
+                e -> ordenar()
+        );
 
         Button resetBtn = new Button("Restablecer");
         resetBtn.getStyleClass().add("boton-estilo");
-        resetBtn.setOnAction(e ->
-                resetearTabla()
+        resetBtn.setOnAction(
+                e -> resetearTabla()
         );
 
         Button benchmarkAllBtn = new Button("Gráfica");
         benchmarkAllBtn.getStyleClass().add("boton-estilo");
-        benchmarkAllBtn.setOnAction(e -> benchmarkAllAlgorithms());
+        benchmarkAllBtn.setOnAction(
+                e -> OrdenarTodo()
+        );
 
-        timeLabel = new Label("Tiempo: -- ns");
-        timeLabel.getStyleClass().add("label-tiempo");
-
+        //Textos
         Label lblCol = new Label("Columna:");
         Label lblAlgo = new Label("Algoritmo:");
+        label = new Label("--");
+        label.getStyleClass().add("label-tiempo");
         lblCol.getStyleClass().add("label-encabezado");
         lblAlgo.getStyleClass().add("label-encabezado");
 
         controls.getChildren().addAll(lblCol, columnaCombo, lblAlgo, algoritmoCombo,
-                sortBtn, resetBtn, benchmarkAllBtn, timeLabel);
+                sortBtn, resetBtn, benchmarkAllBtn, label);
 
         VBox centerBox = new VBox(15, tablaView);
 
@@ -106,42 +111,46 @@ public class AnalisisGUI {
         stage.show();
     }
 
+    //Actualizamos el combo de algoritmos
     private void actualizarAlgoritmoCombo() {
         String col = columnaCombo.getValue();
-        if (!isIntegerColumn(col) && "Radix sort".equals(algoritmoCombo.getValue())) {
+        if (!ColumnaEsNumerica(col) && "Radix sort".equals(algoritmoCombo.getValue())) {
             algoritmoCombo.setValue("Quicksort");
         }
     }
 
-    private boolean isIntegerColumn(String column) {
-        return column.equals("Number of Reviews") || column.equals("Times Listed") ||
-                column.equals("Plays") || column.equals("Playing") ||
-                column.equals("Backlogs") || column.equals("Wishlist");
+    //Verificamos si la columna es de tipo numerico y regresamos true o false
+    private boolean ColumnaEsNumerica(String columna) {
+        return columna.equals("Number of Reviews") || columna.equals("Times Listed") ||
+                columna.equals("Plays") || columna.equals("Playing") ||
+                columna.equals("Backlogs") || columna.equals("Wishlist");
     }
 
-    private void performSort() {
-        String column = columnaCombo.getValue();
-        String algorithm = algoritmoCombo.getValue();
+    //Ordenamos la tabla grafica segun lo seleccionado
+    private void ordenar() {
+        String columna = columnaCombo.getValue();
+        String algoritmo = algoritmoCombo.getValue();
 
         List<VideoGame> currentList = new ArrayList<>(tablaView.getItems());
         VideoGame[] array = currentList.toArray(new VideoGame[0]);
 
         try {
-            long time = controlador.sortAndMeasure(array, column, algorithm);
+            long time = controlador.OrdenarAlgoritmo(array, columna, algoritmo);
             observableData.setAll(array);
-            timeLabel.setText(String.format("Tiempo: %,d ns", time));
         } catch (Exception e) {
-            timeLabel.setText("Error: " + e.getMessage());
+            label.setText("Error: " + e.getMessage());
         }
     }
 
+    //Regresamos la tabla a su estado original
     private void resetearTabla() {
-        observableData.setAll();
-        timeLabel.setText("Tabla restablecida");
+        observableData.setAll(ListaOriginal);
+        label.setText("Tabla restablecida");
     }
 
-    private Comparator<VideoGame> getComparatorForColumn(String column) {
-        switch (column) {
+    //comparamos si la opcion seleccionada esta dentro de las opciones y regresamos el nombre
+    private Comparator<VideoGame> getComparadorDeColumnas(String columna) {
+        switch (columna) {
             case "Title": return Comparator.comparing(VideoGame::getTitle, String.CASE_INSENSITIVE_ORDER);
             case "Release Date": return Comparator.comparing(VideoGame::getReleaseDate);
             case "Rating": return Comparator.comparingDouble(VideoGame::getRating);
@@ -157,8 +166,9 @@ public class AnalisisGUI {
         }
     }
 
-    private Ordenamientos.ToIntFunction<VideoGame> getIntExtractor(String column) {
-        switch (column) {
+    //Este metodo regresa el contenido segun la columna
+    private Ordenamientos.ToIntFunction<VideoGame> getIntExtractor(String columna) {
+        switch (columna) {
             case "Number of Reviews": return VideoGame::getNumberOfReviews;
             case "Times Listed": return VideoGame::getTimesListed;
             case "Plays": return VideoGame::getPlays;
@@ -169,41 +179,48 @@ public class AnalisisGUI {
         }
     }
 
-    private void benchmarkAllAlgorithms() {
+    //En este metodo realizamos una copia de la lista original de los elementos de la tabla, para que mediante
+    //un for apliques cada uno de los algoritmos y contemos el tiempo y los iremos almacenando en otra lista
+    //la cual mandaremos a otro metodos llamado mostrar que graficara los resultados de los tiempos en una grafica
+    private void OrdenarTodo() {
         String columna = columnaCombo.getValue();
-        Comparator<VideoGame> comparator = getComparatorForColumn(columna);
+        Comparator<VideoGame> comparator = getComparadorDeColumnas(columna);
         if (comparator == null) {
-            timeLabel.setText("No se puede comparar!");
+            label.setText("No se puede comparar!");
             return;
         }
 
         List<String> algoritmos = Arrays.asList("Quicksort", "Mergesort", "Shell sort", "Selection sort",
                 "Arrays.sort()", "Arrays.parallelSort()");
-        Map<String, Long> results = new LinkedHashMap<>();
+        Map<String, Long> resultados = new LinkedHashMap<>();
 
         List<VideoGame> ListaNueva = dataManager.getListaOriginal();
 
         for (String algo : algoritmos) {
-            VideoGame[] copy = ListaNueva.toArray(new VideoGame[0]);
-            long t = MedidorTiempo.medirTiempo(copy, comparator, algo);
-            results.put(algo, t);
+            VideoGame[] copia = ListaNueva.toArray(new VideoGame[0]);
+            long t = MedidorTiempo.medirTiempo(copia, comparator, algo);
+            resultados.put(algo, t);
         }
 
-        if (isIntegerColumn(columna)) {
-            VideoGame[] copyRadix = ListaNueva.toArray(new VideoGame[0]);
+        //Apartado especial para verificar si agregar a radix a la grafica
+        if (ColumnaEsNumerica(columna)){
+            VideoGame[] copiaRadix = ListaNueva.toArray(new VideoGame[0]);
             Ordenamientos.ToIntFunction<VideoGame> extractor = getIntExtractor(columna);
+
+            //Este es un apartado especial para radix, ya que en caso de que la columna no sea un
+            //tipo de dato apto para radix, no se agregara ni graficara
             if (extractor != null) {
-                long tRadix = MedidorTiempo.medirTiempoRadix(copyRadix, extractor);
-                results.put("Radix sort", tRadix);
+                long tRadix = MedidorTiempo.medirTiempoRadix(copiaRadix, extractor);
+                resultados.put("Radix sort", tRadix);
             }
             else {
-                results.put("Radix sort", 0L);
+                resultados.put("Radix sort", 0L);
             }
         }
 
         String cssUrl = getClass().getResource("/estilo.css").toExternalForm();
-        GraficaGUI.mostrar(results, columna, cssUrl);
+        GraficaGUI.mostrar(resultados, columna, cssUrl);
 
-        timeLabel.setText("Comparación completada!");
+        label.setText("Comparación completada!");
     }
 }

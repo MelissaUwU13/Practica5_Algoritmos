@@ -69,7 +69,6 @@
     -fx-font-weight: bold;
 }
 
-/* Filas alternas (una blanca, una azul rey super clarito) */
 .table-row-cell {
     -fx-background-color: white;
     -fx-border-color: transparent transparent #f1f5f9 transparent;
@@ -79,7 +78,6 @@
     -fx-background-color: #f8fafc;
 }
 
-/* Fila seleccionada */
 .table-row-cell:filled:selected {
     -fx-background-color: #dbeafe;
     -fx-text-fill: #1e40af;

@@ -2,6 +2,7 @@ package org.example.practica5_algoritmos;
 
 import java.util.Comparator;
 
+//En esta clase se almacenan los metodos de ordenamiento
 public class Ordenamientos {
 
     public static <T> void selectionSort(T[] arr, Comparator<? super T> comp) {
@@ -73,7 +74,6 @@ public class Ordenamientos {
     }
 
     public static <T> void quickSort(T[] arr, Comparator<? super T> comp) {
-        // En Java los índices van de 0 a length - 1
         quickRecursivo(arr, 0, arr.length - 1, comp);
     }
 

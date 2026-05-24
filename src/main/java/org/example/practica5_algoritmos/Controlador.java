@@ -3,17 +3,21 @@ package org.example.practica5_algoritmos;
 import java.util.Comparator;
 
 public class Controlador {
-    public long sortAndMeasure(VideoGame[] array, String column, String algorithm) {
-        Comparator<VideoGame> comparator = getComparator(column);
+    public long OrdenarAlgoritmo(VideoGame[] array, String columna, String algoritmo) {
+        Comparator<VideoGame> comparator = getComparator(columna);
 
         if (comparator == null) throw new IllegalArgumentException("Columna no soportada");
-        if (algorithm.equals("Radix sort")) {
-            if (!isIntegerColumn(column)) throw new IllegalArgumentException("Radix solo para enteros");
-            Ordenamientos.ToIntFunction<VideoGame> extractor = getIntExtractor(column);
+        if (algoritmo.equals("Radix sort")) {
+            //si la columna no es de tipo int, no es apta en caso de que se haya elegido el metodo radix
+            if (!ColumnaEsEntero(columna)) throw new IllegalArgumentException("Radix solo para enteros");
+
+            //sino entonces medimos el tiempo normal
+            Ordenamientos.ToIntFunction<VideoGame> extractor = getIntExtractor(columna);
             return MedidorTiempo.medirTiempoRadix(array, extractor);
         }
+        //si no es radix, es cualquier otro algoritmo, asi que solo mediremos el tiempo
         else {
-            return MedidorTiempo.medirTiempo(array, comparator, algorithm);
+            return MedidorTiempo.medirTiempo(array, comparator, algoritmo);
         }
     }
 
@@ -34,7 +38,8 @@ public class Controlador {
         }
     }
 
-    private boolean isIntegerColumn(String column) {
+    //Verificamos si la columna es de tipo numerico y regresamos true o false
+    private boolean ColumnaEsEntero(String column) {
         return column.equals("Number of Reviews") || column.equals("Times Listed") ||
                 column.equals("Plays") || column.equals("Playing") ||
                 column.equals("Backlogs") || column.equals("Wishlist");

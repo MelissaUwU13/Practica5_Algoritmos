@@ -9,6 +9,7 @@ public class TablaGUI extends TableView<VideoGame> {
 
     public TablaGUI(ObservableList<VideoGame> datos) {
         this.setItems(datos);
+        //En un box vertical ingresamos todas las columnas
         VBox.setVgrow(this, javafx.scene.layout.Priority.ALWAYS);
         crearColumnas();
     }

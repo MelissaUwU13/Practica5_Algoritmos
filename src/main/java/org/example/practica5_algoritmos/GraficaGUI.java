@@ -12,26 +12,29 @@ import java.util.Map;
 
 public class GraficaGUI {
 
-    public static void mostrar(Map<String, Long> times, String column, String cssPath) {
+    //Metodo para mostrar la grafica necesitando el tiempo, tipo de columna y el enlace css
+    public static void mostrar(Map<String, Long> tiempo, String columna, String cssPath) {
         Stage chartStage = new Stage();
-        chartStage.setTitle("Comparación de tiempos - " + column);
+        chartStage.setTitle("Comparación de tiempos - " + columna);
 
         CategoryAxis xAxis = new CategoryAxis();
         NumberAxis yAxis = new NumberAxis();
         yAxis.setLabel("Nanosegundos");
 
         BarChart<String, Number> barChart = new BarChart<>(xAxis, yAxis);
-        barChart.setTitle("Gráfica de Ordenamiento - " + column);
+        barChart.setTitle("Gráfica de Ordenamiento - " + columna);
         barChart.setPrefSize(800, 600);
 
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         series.setName("Tiempo (ns)");
-        for (Map.Entry<String, Long> e : times.entrySet()) {
+
+        //Segun la lista ingresada, lo estaremos ingresando a la grafica de barras
+        for (Map.Entry<String, Long> e : tiempo.entrySet()) {
             series.getData().add(new XYChart.Data<>(e.getKey(), e.getValue()));
         }
+
         barChart.getData().add(series);
 
-        // Mejorar la visibilidad de las etiquetas
         xAxis.setTickLabelRotation(45);
         xAxis.setPrefWidth(600);
 
@@ -40,7 +43,7 @@ public class GraficaGUI {
 
         Scene scene = new Scene(vbox, 900, 600);
 
-        // Cargar el CSS pasado por parámetro
+        //Carga el CSS pasado por parámetro
         if (cssPath != null) {
             scene.getStylesheets().add(cssPath);
         }
